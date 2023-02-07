@@ -12,20 +12,27 @@ import (
 	"github.com/blackmax1886/tas9-api/graph/model"
 )
 
-// CreateTodo is the resolver for the createTodo field.
-func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
-	todo := &model.Todo{
-		Text: input.Text,
-		ID:   fmt.Sprintf("T%d", rand.Int()),
-		User: &model.User{ID: input.UserID, Name: "user " + input.UserID},
+// CreateTask is the resolver for the createTask field.
+func (r *mutationResolver) CreateTask(ctx context.Context, input model.NewTask) (*model.Task, error) {
+	tasks := &model.Task{
+		Content: &input.Content,
+		ID:      fmt.Sprintf("T%d", rand.Int()),
+		User:    &model.User{ID: input.UserID, Name: "user " + input.UserID},
+		Done:    false,
+		Type:    input.Type,
 	}
-	r.todos = append(r.todos, todo)
-	return todo, nil
+	r.tasks = append(r.tasks, tasks)
+	return tasks, nil
 }
 
-// Todos is the resolver for the todos field.
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	return r.todos, nil
+// Tasks is the resolver for the tasks field.
+func (r *queryResolver) Tasks(ctx context.Context) ([]*model.Task, error) {
+	return r.tasks, nil
+}
+
+// Subtasks is the resolver for the subtasks field.
+func (r *queryResolver) Subtasks(ctx context.Context) ([]*model.Subtask, error) {
+	return r.subtasks, nil
 }
 
 // Mutation returns MutationResolver implementation.

@@ -2,19 +2,40 @@
 
 package model
 
-type NewTodo struct {
-	Text   string `json:"text"`
-	UserID string `json:"userId"`
+type NewTask struct {
+	Content string `json:"content"`
+	UserID  string `json:"userId"`
+	Type    string `json:"type"`
 }
 
-type Todo struct {
-	ID   string `json:"id"`
-	Text string `json:"text"`
-	Done bool   `json:"done"`
-	User *User  `json:"user"`
+type Subtask struct {
+	ID         string  `json:"id"`
+	Name       string  `json:"name"`
+	ParentTask *Task   `json:"parent_task"`
+	Content    *string `json:"content"`
+	Done       bool    `json:"done"`
+	Due        *string `json:"due"`
+	AssignedAt *string `json:"assigned_at"`
+	Priority   *string `json:"priority"`
+	Archived   *bool   `json:"archived"`
+}
+
+type Task struct {
+	ID         string  `json:"id"`
+	Name       string  `json:"name"`
+	Content    *string `json:"content"`
+	Done       bool    `json:"done"`
+	Due        *string `json:"due"`
+	AssignedAt *string `json:"assigned_at"`
+	Group      *string `json:"group"`
+	Type       string  `json:"type"`
+	Priority   *string `json:"priority"`
+	Archived   *bool   `json:"archived"`
+	User       *User   `json:"user"`
 }
 
 type User struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	ID    string `json:"id"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
 }
