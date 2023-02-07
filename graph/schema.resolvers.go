@@ -18,8 +18,6 @@ func (r *mutationResolver) CreateTask(ctx context.Context, input model.NewTask) 
 		Content: &input.Content,
 		ID:      fmt.Sprintf("T%d", rand.Int()),
 		User:    &model.User{ID: input.UserID, Name: "user " + input.UserID},
-		Done:    false,
-		Type:    input.Type,
 	}
 	r.tasks = append(r.tasks, tasks)
 	return tasks, nil

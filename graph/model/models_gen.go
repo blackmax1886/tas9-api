@@ -5,7 +5,6 @@ package model
 type NewTask struct {
 	Content string `json:"content"`
 	UserID  string `json:"userId"`
-	Type    string `json:"type"`
 }
 
 type Subtask struct {

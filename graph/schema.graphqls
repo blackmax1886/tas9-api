@@ -42,7 +42,6 @@ type Query {
 input NewTask {
   content: String!
   userId: String!
-  type: String!
 }
 
 type Mutation {
