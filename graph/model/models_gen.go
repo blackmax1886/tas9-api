@@ -29,7 +29,7 @@ type Task struct {
 	Group      *string `json:"group"`
 	Type       string  `json:"type"`
 	Priority   *string `json:"priority"`
-	Archived   *bool   `json:"archived"`
+	Archived   bool    `json:"archived"`
 	User       *User   `json:"user"`
 }
 

@@ -12,7 +12,7 @@ type Task {
   group: String
   type: String!
   priority: String
-  archived: Boolean
+  archived: Boolean!
   user: User!
 }
 
