@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `todo` (
+CREATE TABLE IF NOT EXISTS `task` (
   `id` varchar(64) NOT NULL,
   `text` varchar(256) NOT NULL,
   `done` bool NOT NULL,
