@@ -1,7 +1,14 @@
 CREATE TABLE IF NOT EXISTS `task` (
   `id` varchar(64) NOT NULL,
-  `text` varchar(256) NOT NULL,
-  `done` bool NOT NULL,
+  `name` varchar(64) NOT NULL,
+  `content` varchar(256) NOT NULL,
+  `done` boolean NOT NULL,
+  `due` datetime,
+  `assigned_at` datetime,
+  `group` varchar(64),
+  `type` varchar(16) NOT NULL,
+  `priority` varchar(16),
+  `archived` boolean NOT NULL,
   `user_id` varchar(64) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin;
