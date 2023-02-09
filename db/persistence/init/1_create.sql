@@ -1,3 +1,10 @@
+CREATE TABLE IF NOT EXISTS `user` (
+  `id` varchar(64) NOT NULL,
+  `name` varchar(256) NOT NULL,
+  `email` varchar(64) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin;
+
 CREATE TABLE IF NOT EXISTS `task` (
   `id` varchar(64) NOT NULL,
   `name` varchar(64) NOT NULL,
@@ -10,14 +17,8 @@ CREATE TABLE IF NOT EXISTS `task` (
   `priority` varchar(16),
   `archived` boolean NOT NULL DEFAULT false,
   `user_id` varchar(64) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin;
-
-CREATE TABLE IF NOT EXISTS `user` (
-  `id` varchar(64) NOT NULL,
-  `name` varchar(256) NOT NULL,
-  `email` varchar(64) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin;
 
 CREATE TABLE IF NOT EXISTS `subtask` (
