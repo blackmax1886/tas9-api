@@ -10,12 +10,21 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/blackmax1886/tas9-api/db"
 	"github.com/blackmax1886/tas9-api/graph"
+	"github.com/joho/godotenv"
 	"github.com/rs/cors"
 )
 
 const defaultPort = "8080"
 
+func loadEnv() {
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatalf("Error loading env target")
+	}
+}
+
 func main() {
+	loadEnv()
 	db, err := db.ConnectDB()
 
 	rows, err := db.Raw("show tables").Rows()
