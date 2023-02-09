@@ -8,20 +8,15 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/blackmax1886/tas9-api/db"
 	"github.com/blackmax1886/tas9-api/graph"
 	"github.com/rs/cors"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
 )
 
 const defaultPort = "8080"
 
 func main() {
-	dsn := "localuser:localpass@tcp(127.0.0.1:3306)/localdb?charset=utf8&parseTime=True&loc=Local"
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil {
-		panic(err.Error())
-	}
+	db, err := db.ConnectDB()
 
 	rows, err := db.Raw("show tables").Rows()
 	if err != nil {
@@ -36,7 +31,6 @@ func main() {
 		}
 		fmt.Println(table)
 	}
-
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = defaultPort
