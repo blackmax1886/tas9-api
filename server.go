@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -26,26 +25,16 @@ func loadEnv() {
 func main() {
 	loadEnv()
 	db, err := db.ConnectDB()
-
-	rows, err := db.Raw("show tables").Rows()
 	if err != nil {
-		panic(err)
+		log.Fatal(err.Error())
 	}
-	defer rows.Close()
 
-	for rows.Next() {
-		var table string
-		if err := rows.Scan(&table); err != nil {
-			panic(err)
-		}
-		fmt.Println(table)
-	}
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = defaultPort
 	}
 
-	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
+	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{DB: db}}))
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:3000"},
 		AllowCredentials: true,
