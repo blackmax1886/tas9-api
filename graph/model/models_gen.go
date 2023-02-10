@@ -7,6 +7,11 @@ type NewTask struct {
 	UserID  string `json:"userId"`
 }
 
+type NewUser struct {
+	Name  string `json:"Name"`
+	Email string `json:"Email"`
+}
+
 type Subtask struct {
 	ID         string  `json:"id"`
 	Name       string  `json:"name"`

@@ -35,8 +35,14 @@ type Subtask {
 }
 
 type Query {
+  user(id: String!): User!
   tasks: [Task!]!
   subtasks: [Subtask!]! 
+}
+
+input NewUser {
+  Name: String!
+  Email: String!
 }
 
 input NewTask {
@@ -45,5 +51,6 @@ input NewTask {
 }
 
 type Mutation {
+  createUser(input: NewUser!): User!
   createTask(input: NewTask!): Task!
 }

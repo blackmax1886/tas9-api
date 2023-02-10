@@ -12,6 +12,11 @@ import (
 	"github.com/blackmax1886/tas9-api/graph/model"
 )
 
+// CreateUser is the resolver for the createUser field.
+func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (*model.User, error) {
+	panic(fmt.Errorf("not implemented: CreateUser - createUser"))
+}
+
 // CreateTask is the resolver for the createTask field.
 func (r *mutationResolver) CreateTask(ctx context.Context, input model.NewTask) (*model.Task, error) {
 	tasks := &model.Task{
@@ -21,6 +26,11 @@ func (r *mutationResolver) CreateTask(ctx context.Context, input model.NewTask) 
 	}
 	r.tasks = append(r.tasks, tasks)
 	return tasks, nil
+}
+
+// User is the resolver for the user field.
+func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error) {
+	panic(fmt.Errorf("not implemented: User - user"))
 }
 
 // Tasks is the resolver for the tasks field.
