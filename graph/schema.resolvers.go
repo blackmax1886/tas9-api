@@ -15,7 +15,14 @@ import (
 
 // CreateUser is the resolver for the createUser field.
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (*model.User, error) {
-	panic("not impremented")
+	user := entity.User{
+		Name:  input.Name,
+		Email: input.Email,
+	}
+	if err := r.DB.Create(&user).Error; err != nil {
+		return nil, err
+	}
+	return entity.NewUserFromEntity(&user), nil
 }
 
 // CreateTask is the resolver for the createTask field.
