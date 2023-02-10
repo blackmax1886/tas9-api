@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/blackmax1886/tas9-api/graph/model"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -19,6 +20,11 @@ func ConnectDB() (*gorm.DB, error) {
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		fmt.Printf("Error connecting to database : error=%v", err)
+		return nil, err
+	}
+
+	err = db.AutoMigrate(&model.User{}, &model.Task{})
+	if err != nil {
 		return nil, err
 	}
 
