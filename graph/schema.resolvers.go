@@ -7,40 +7,48 @@ package graph
 import (
 	"context"
 	"fmt"
-	"math/rand"
+	"strconv"
 
+	"github.com/blackmax1886/tas9-api/graph/entity"
 	"github.com/blackmax1886/tas9-api/graph/model"
 )
 
 // CreateUser is the resolver for the createUser field.
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (*model.User, error) {
-	panic(fmt.Errorf("not implemented: CreateUser - createUser"))
+	panic("not impremented")
 }
 
 // CreateTask is the resolver for the createTask field.
 func (r *mutationResolver) CreateTask(ctx context.Context, input model.NewTask) (*model.Task, error) {
-	tasks := &model.Task{
-		Content: &input.Content,
-		ID:      fmt.Sprintf("T%d", rand.Int()),
-		User:    &model.User{ID: input.UserID, Name: "user " + input.UserID},
-	}
-	r.tasks = append(r.tasks, tasks)
-	return tasks, nil
+	panic("not impremented")
 }
 
 // User is the resolver for the user field.
 func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error) {
-	panic(fmt.Errorf("not implemented: User - user"))
+	userID, err := strconv.Atoi(id)
+	if err != nil {
+		return nil, err
+	}
+	var u entity.User
+	if err := r.DB.Find(&u, userID).Error; err != nil {
+		return nil, err
+	}
+
+	return &model.User{
+		ID:    fmt.Sprintf("%d", u.ID),
+		Name:  u.Name,
+		Email: u.Email,
+	}, nil
 }
 
 // Tasks is the resolver for the tasks field.
 func (r *queryResolver) Tasks(ctx context.Context) ([]*model.Task, error) {
-	return r.tasks, nil
+	panic("not impremented")
 }
 
 // Subtasks is the resolver for the subtasks field.
 func (r *queryResolver) Subtasks(ctx context.Context) ([]*model.Subtask, error) {
-	return r.subtasks, nil
+	panic("not impremented")
 }
 
 // Mutation returns MutationResolver implementation.
