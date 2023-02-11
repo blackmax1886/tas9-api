@@ -29,7 +29,7 @@ func (r *mutationResolver) CreateTask(ctx context.Context, input model.NewTask) 
 	task := model.Task{
 		ID:       ulid.Make().String(),
 		Name:     input.Name,
-		Content:  &input.Content,
+		Content:  input.Content,
 		Done:     false,
 		Archived: false,
 		UserID:   &input.UserID,
@@ -38,6 +38,22 @@ func (r *mutationResolver) CreateTask(ctx context.Context, input model.NewTask) 
 		return nil, err
 	}
 	return &task, nil
+}
+
+// CreateSubTask is the resolver for the createSubTask field.
+func (r *mutationResolver) CreateSubTask(ctx context.Context, input model.NewSubtask) (*model.Subtask, error) {
+	subtask := model.Subtask{
+		ID:       ulid.Make().String(),
+		Name:     input.Name,
+		Content:  input.Content,
+		Done:     false,
+		Archived: false,
+		TaskID:   &input.TaskID,
+	}
+	if err := r.DB.Create(&subtask).Error; err != nil {
+		return nil, err
+	}
+	return &subtask, nil
 }
 
 // User is the resolver for the user field.
@@ -61,7 +77,11 @@ func (r *queryResolver) Tasks(ctx context.Context, userID *string) ([]*model.Tas
 
 // Subtasks is the resolver for the subtasks field.
 func (r *queryResolver) Subtasks(ctx context.Context, taskID *string) ([]*model.Subtask, error) {
-	panic("not impremented")
+	var subtasks []*model.Subtask
+	if err := r.DB.Find(&subtasks, "task_id = ?", taskID).Error; err != nil {
+		return nil, err
+	}
+	return subtasks, nil
 }
 
 // Mutation returns MutationResolver implementation.
