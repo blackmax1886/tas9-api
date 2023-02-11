@@ -27,7 +27,7 @@ type User {
 type Subtask {
   id: ID!
   name: String!
-  parent_task: Task!
+  task: Task!
   content: String
   done: Boolean!
   due: String

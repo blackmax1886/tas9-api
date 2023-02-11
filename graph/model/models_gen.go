@@ -11,37 +11,3 @@ type NewUser struct {
 	Name  string `json:"Name"`
 	Email string `json:"Email"`
 }
-
-type Subtask struct {
-	ID         string  `json:"id"`
-	Name       string  `json:"name"`
-	ParentTask *Task   `json:"parent_task"`
-	Content    *string `json:"content"`
-	Done       bool    `json:"done"`
-	Due        *string `json:"due"`
-	AssignedAt *string `json:"assigned_at"`
-	Priority   *string `json:"priority"`
-	Archived   *bool   `json:"archived"`
-}
-
-type Task struct {
-	ID         string     `json:"id"`
-	Name       string     `json:"name"`
-	Content    *string    `json:"content"`
-	Done       bool       `json:"done"`
-	Due        *string    `json:"due"`
-	AssignedAt *string    `json:"assigned_at"`
-	Group      *string    `json:"group"`
-	Type       string     `json:"type"`
-	Priority   *string    `json:"priority"`
-	Archived   bool       `json:"archived"`
-	User       *User      `json:"user"`
-	Subtasks   []*Subtask `json:"subtasks"`
-}
-
-type User struct {
-	ID    string  `json:"id"`
-	Name  string  `json:"name"`
-	Email string  `json:"email"`
-	Tasks []*Task `json:"tasks"`
-}

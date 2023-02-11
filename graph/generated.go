@@ -63,8 +63,8 @@ type ComplexityRoot struct {
 		Due        func(childComplexity int) int
 		ID         func(childComplexity int) int
 		Name       func(childComplexity int) int
-		ParentTask func(childComplexity int) int
 		Priority   func(childComplexity int) int
+		Task       func(childComplexity int) int
 	}
 
 	Task struct {
@@ -214,19 +214,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Subtask.Name(childComplexity), true
 
-	case "Subtask.parent_task":
-		if e.complexity.Subtask.ParentTask == nil {
-			break
-		}
-
-		return e.complexity.Subtask.ParentTask(childComplexity), true
-
 	case "Subtask.priority":
 		if e.complexity.Subtask.Priority == nil {
 			break
 		}
 
 		return e.complexity.Subtask.Priority(childComplexity), true
+
+	case "Subtask.task":
+		if e.complexity.Subtask.Task == nil {
+			break
+		}
+
+		return e.complexity.Subtask.Task(childComplexity), true
 
 	case "Task.archived":
 		if e.complexity.Task.Archived == nil {
@@ -846,8 +846,8 @@ func (ec *executionContext) fieldContext_Query_subtasks(ctx context.Context, fie
 				return ec.fieldContext_Subtask_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Subtask_name(ctx, field)
-			case "parent_task":
-				return ec.fieldContext_Subtask_parent_task(ctx, field)
+			case "task":
+				return ec.fieldContext_Subtask_task(ctx, field)
 			case "content":
 				return ec.fieldContext_Subtask_content(ctx, field)
 			case "done":
@@ -1082,8 +1082,8 @@ func (ec *executionContext) fieldContext_Subtask_name(ctx context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _Subtask_parent_task(ctx context.Context, field graphql.CollectedField, obj *model.Subtask) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Subtask_parent_task(ctx, field)
+func (ec *executionContext) _Subtask_task(ctx context.Context, field graphql.CollectedField, obj *model.Subtask) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subtask_task(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1096,7 +1096,7 @@ func (ec *executionContext) _Subtask_parent_task(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.ParentTask, nil
+		return obj.Task, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1113,7 +1113,7 @@ func (ec *executionContext) _Subtask_parent_task(ctx context.Context, field grap
 	return ec.marshalNTask2ᚖgithubᚗcomᚋblackmax1886ᚋtas9ᚑapiᚋgraphᚋmodelᚐTask(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Subtask_parent_task(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Subtask_task(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Subtask",
 		Field:      field,
@@ -1923,8 +1923,8 @@ func (ec *executionContext) fieldContext_Task_subtasks(ctx context.Context, fiel
 				return ec.fieldContext_Subtask_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Subtask_name(ctx, field)
-			case "parent_task":
-				return ec.fieldContext_Subtask_parent_task(ctx, field)
+			case "task":
+				return ec.fieldContext_Subtask_task(ctx, field)
 			case "content":
 				return ec.fieldContext_Subtask_content(ctx, field)
 			case "done":
@@ -4159,9 +4159,9 @@ func (ec *executionContext) _Subtask(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "parent_task":
+		case "task":
 
-			out.Values[i] = ec._Subtask_parent_task(ctx, field, obj)
+			out.Values[i] = ec._Subtask_task(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
