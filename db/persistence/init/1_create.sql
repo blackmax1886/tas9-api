@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS `users` (
-  `id` MEDIUMINT NOT NULL AUTO_INCREMENT,
+  `id` varchar(64) NOT NULL,
   `name` varchar(256) NOT NULL,
   `email` varchar(64) NOT NULL,
   PRIMARY KEY (`id`)
@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS `tasks` (
   `type` varchar(16) NOT NULL DEFAULT '',
   `priority` varchar(16),
   `archived` boolean NOT NULL DEFAULT false,
-  `user_id` MEDIUMINT NOT NULL,
+  `user_id` varchar(64) NOT NULL,
   PRIMARY KEY (`id`),
   FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin;
