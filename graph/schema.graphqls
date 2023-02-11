@@ -38,8 +38,8 @@ type Subtask {
 
 type Query {
   user(id: String!): User!
-  tasks: [Task!]!
-  subtasks: [Subtask!]! 
+  tasks(userId: String): [Task!]!
+  subtasks(taskId: String): [Subtask!]! 
 }
 
 input NewUser {

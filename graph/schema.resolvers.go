@@ -40,12 +40,12 @@ func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error
 }
 
 // Tasks is the resolver for the tasks field.
-func (r *queryResolver) Tasks(ctx context.Context) ([]*model.Task, error) {
+func (r *queryResolver) Tasks(ctx context.Context, userID *string) ([]*model.Task, error) {
 	panic("not impremented")
 }
 
 // Subtasks is the resolver for the subtasks field.
-func (r *queryResolver) Subtasks(ctx context.Context) ([]*model.Subtask, error) {
+func (r *queryResolver) Subtasks(ctx context.Context, taskID *string) ([]*model.Subtask, error) {
 	panic("not impremented")
 }
 
