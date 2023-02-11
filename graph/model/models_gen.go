@@ -2,10 +2,16 @@
 
 package model
 
+type NewSubtask struct {
+	Name    string  `json:"name"`
+	Content *string `json:"content"`
+	TaskID  string  `json:"taskId"`
+}
+
 type NewTask struct {
-	Name    string `json:"name"`
-	Content string `json:"content"`
-	UserID  string `json:"userId"`
+	Name    string  `json:"name"`
+	Content *string `json:"content"`
+	UserID  string  `json:"userId"`
 }
 
 type NewUser struct {

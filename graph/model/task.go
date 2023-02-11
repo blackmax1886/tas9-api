@@ -26,5 +26,5 @@ type Subtask struct {
 	Due        *string `json:"due"`
 	AssignedAt *string `json:"assigned_at"`
 	Priority   *string `json:"priority"`
-	Archived   *bool   `json:"archived"`
+	Archived   bool    `json:"archived"`
 }

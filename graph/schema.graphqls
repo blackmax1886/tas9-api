@@ -33,7 +33,7 @@ type Subtask {
   due: String
   assigned_at: String
   priority: String
-  archived: Boolean
+  archived: Boolean!
 }
 
 type Query {
@@ -49,11 +49,18 @@ input NewUser {
 
 input NewTask {
   name: String!
-  content: String!
+  content: String
   userId: String!
+}
+
+input NewSubtask {
+  name: String!
+  content: String
+  taskId: String!
 }
 
 type Mutation {
   createUser(input: NewUser!): User!
   createTask(input: NewTask!): Task!
+  createSubTask(input: NewSubtask!): Subtask!
 }
