@@ -6,31 +6,82 @@ package graph
 
 import (
 	"context"
-	"fmt"
-	"math/rand"
 
 	"github.com/blackmax1886/tas9-api/graph/model"
+	ulid "github.com/oklog/ulid/v2"
 )
+
+// CreateUser is the resolver for the createUser field.
+func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (*model.User, error) {
+	user := model.User{
+		ID:    ulid.Make().String(),
+		Name:  input.Name,
+		Email: input.Email,
+	}
+	if err := r.DB.Create(&user).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
 
 // CreateTask is the resolver for the createTask field.
 func (r *mutationResolver) CreateTask(ctx context.Context, input model.NewTask) (*model.Task, error) {
-	tasks := &model.Task{
-		Content: &input.Content,
-		ID:      fmt.Sprintf("T%d", rand.Int()),
-		User:    &model.User{ID: input.UserID, Name: "user " + input.UserID},
+	task := model.Task{
+		ID:       ulid.Make().String(),
+		Name:     input.Name,
+		Content:  input.Content,
+		Done:     false,
+		Archived: false,
+		UserID:   &input.UserID,
 	}
-	r.tasks = append(r.tasks, tasks)
-	return tasks, nil
+	if err := r.DB.Create(&task).Error; err != nil {
+		return nil, err
+	}
+	return &task, nil
+}
+
+// CreateSubTask is the resolver for the createSubTask field.
+func (r *mutationResolver) CreateSubTask(ctx context.Context, input model.NewSubtask) (*model.Subtask, error) {
+	subtask := model.Subtask{
+		ID:       ulid.Make().String(),
+		Name:     input.Name,
+		Content:  input.Content,
+		Done:     false,
+		Archived: false,
+		TaskID:   &input.TaskID,
+	}
+	if err := r.DB.Create(&subtask).Error; err != nil {
+		return nil, err
+	}
+	return &subtask, nil
+}
+
+// User is the resolver for the user field.
+func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error) {
+	var user model.User
+	if err := r.DB.Find(&user, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	return &user, nil
 }
 
 // Tasks is the resolver for the tasks field.
-func (r *queryResolver) Tasks(ctx context.Context) ([]*model.Task, error) {
-	return r.tasks, nil
+func (r *queryResolver) Tasks(ctx context.Context, userID *string) ([]*model.Task, error) {
+	var tasks []*model.Task
+	if err := r.DB.Find(&tasks, "user_id = ?", userID).Error; err != nil {
+		return nil, err
+	}
+	return tasks, nil
 }
 
 // Subtasks is the resolver for the subtasks field.
-func (r *queryResolver) Subtasks(ctx context.Context) ([]*model.Subtask, error) {
-	return r.subtasks, nil
+func (r *queryResolver) Subtasks(ctx context.Context, taskID *string) ([]*model.Subtask, error) {
+	var subtasks []*model.Subtask
+	if err := r.DB.Find(&subtasks, "task_id = ?", taskID).Error; err != nil {
+		return nil, err
+	}
+	return subtasks, nil
 }
 
 // Mutation returns MutationResolver implementation.

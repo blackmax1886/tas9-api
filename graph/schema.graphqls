@@ -10,40 +10,57 @@ type Task {
   due: String
   assigned_at: String
   group: String
-  type: String!
+  type: String
   priority: String
-  archived: Boolean
+  archived: Boolean!
   user: User!
+  subtasks: [Subtask!]!
 }
 
 type User {
   id: ID!
   name: String!
   email: String!
+  tasks: [Task!]!
 }
 
 type Subtask {
   id: ID!
   name: String!
-  parent_task: Task!
+  task: Task!
   content: String
   done: Boolean!
   due: String
   assigned_at: String
   priority: String
-  archived: Boolean
+  archived: Boolean!
 }
 
 type Query {
-  tasks: [Task!]!
-  subtasks: [Subtask!]! 
+  user(id: String!): User!
+  tasks(userId: String): [Task!]!
+  subtasks(taskId: String): [Subtask!]! 
+}
+
+input NewUser {
+  Name: String!
+  Email: String!
 }
 
 input NewTask {
-  content: String!
+  name: String!
+  content: String
   userId: String!
 }
 
+input NewSubtask {
+  name: String!
+  content: String
+  taskId: String!
+}
+
 type Mutation {
+  createUser(input: NewUser!): User!
   createTask(input: NewTask!): Task!
+  createSubTask(input: NewSubtask!): Subtask!
 }
