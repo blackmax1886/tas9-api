@@ -10,7 +10,7 @@ type Task {
   due: String
   assigned_at: String
   group: String
-  type: String!
+  type: String
   priority: String
   archived: Boolean!
   user: User!
@@ -48,6 +48,7 @@ input NewUser {
 }
 
 input NewTask {
+  name: String!
   content: String!
   userId: String!
 }

@@ -8,7 +8,7 @@ type Task struct {
 	Due        *string    `json:"due"`
 	AssignedAt *string    `json:"assigned_at"`
 	Group      *string    `json:"group"`
-	Type       string     `json:"type"`
+	Type       *string    `json:"type"`
 	Priority   *string    `json:"priority"`
 	Archived   bool       `json:"archived"`
 	UserID     *string    `json:"user_id" gorm:"size:64"`
