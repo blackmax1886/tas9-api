@@ -25,21 +25,23 @@ type Subtask struct {
 }
 
 type Task struct {
-	ID         string  `json:"id"`
-	Name       string  `json:"name"`
-	Content    *string `json:"content"`
-	Done       bool    `json:"done"`
-	Due        *string `json:"due"`
-	AssignedAt *string `json:"assigned_at"`
-	Group      *string `json:"group"`
-	Type       string  `json:"type"`
-	Priority   *string `json:"priority"`
-	Archived   bool    `json:"archived"`
-	User       *User   `json:"user"`
+	ID         string     `json:"id"`
+	Name       string     `json:"name"`
+	Content    *string    `json:"content"`
+	Done       bool       `json:"done"`
+	Due        *string    `json:"due"`
+	AssignedAt *string    `json:"assigned_at"`
+	Group      *string    `json:"group"`
+	Type       string     `json:"type"`
+	Priority   *string    `json:"priority"`
+	Archived   bool       `json:"archived"`
+	User       *User      `json:"user"`
+	Subtasks   []*Subtask `json:"subtasks"`
 }
 
 type User struct {
-	ID    string `json:"id"`
-	Name  string `json:"name"`
-	Email string `json:"email"`
+	ID    string  `json:"id"`
+	Name  string  `json:"name"`
+	Email string  `json:"email"`
+	Tasks []*Task `json:"tasks"`
 }

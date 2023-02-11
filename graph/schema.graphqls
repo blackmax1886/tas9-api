@@ -14,12 +14,14 @@ type Task {
   priority: String
   archived: Boolean!
   user: User!
+  subtasks: [Subtask!]!
 }
 
 type User {
   id: ID!
   name: String!
   email: String!
+  tasks: [Task!]!
 }
 
 type Subtask {

@@ -77,6 +77,7 @@ type ComplexityRoot struct {
 		ID         func(childComplexity int) int
 		Name       func(childComplexity int) int
 		Priority   func(childComplexity int) int
+		Subtasks   func(childComplexity int) int
 		Type       func(childComplexity int) int
 		User       func(childComplexity int) int
 	}
@@ -85,6 +86,7 @@ type ComplexityRoot struct {
 		Email func(childComplexity int) int
 		ID    func(childComplexity int) int
 		Name  func(childComplexity int) int
+		Tasks func(childComplexity int) int
 	}
 }
 
@@ -289,6 +291,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Task.Priority(childComplexity), true
 
+	case "Task.subtasks":
+		if e.complexity.Task.Subtasks == nil {
+			break
+		}
+
+		return e.complexity.Task.Subtasks(childComplexity), true
+
 	case "Task.type":
 		if e.complexity.Task.Type == nil {
 			break
@@ -323,6 +332,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.User.Name(childComplexity), true
+
+	case "User.tasks":
+		if e.complexity.User.Tasks == nil {
+			break
+		}
+
+		return e.complexity.User.Tasks(childComplexity), true
 
 	}
 	return 0, false
@@ -555,6 +571,8 @@ func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context
 				return ec.fieldContext_User_name(ctx, field)
 			case "email":
 				return ec.fieldContext_User_email(ctx, field)
+			case "tasks":
+				return ec.fieldContext_User_tasks(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -633,6 +651,8 @@ func (ec *executionContext) fieldContext_Mutation_createTask(ctx context.Context
 				return ec.fieldContext_Task_archived(ctx, field)
 			case "user":
 				return ec.fieldContext_Task_user(ctx, field)
+			case "subtasks":
+				return ec.fieldContext_Task_subtasks(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Task", field.Name)
 		},
@@ -695,6 +715,8 @@ func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field g
 				return ec.fieldContext_User_name(ctx, field)
 			case "email":
 				return ec.fieldContext_User_email(ctx, field)
+			case "tasks":
+				return ec.fieldContext_User_tasks(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -773,6 +795,8 @@ func (ec *executionContext) fieldContext_Query_tasks(ctx context.Context, field 
 				return ec.fieldContext_Task_archived(ctx, field)
 			case "user":
 				return ec.fieldContext_Task_user(ctx, field)
+			case "subtasks":
+				return ec.fieldContext_Task_subtasks(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Task", field.Name)
 		},
@@ -1119,6 +1143,8 @@ func (ec *executionContext) fieldContext_Subtask_parent_task(ctx context.Context
 				return ec.fieldContext_Task_archived(ctx, field)
 			case "user":
 				return ec.fieldContext_Task_user(ctx, field)
+			case "subtasks":
+				return ec.fieldContext_Task_subtasks(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Task", field.Name)
 		},
@@ -1845,8 +1871,74 @@ func (ec *executionContext) fieldContext_Task_user(ctx context.Context, field gr
 				return ec.fieldContext_User_name(ctx, field)
 			case "email":
 				return ec.fieldContext_User_email(ctx, field)
+			case "tasks":
+				return ec.fieldContext_User_tasks(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Task_subtasks(ctx context.Context, field graphql.CollectedField, obj *model.Task) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Task_subtasks(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Subtasks, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Subtask)
+	fc.Result = res
+	return ec.marshalNSubtask2ᚕᚖgithubᚗcomᚋblackmax1886ᚋtas9ᚑapiᚋgraphᚋmodelᚐSubtaskᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Task_subtasks(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Task",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Subtask_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Subtask_name(ctx, field)
+			case "parent_task":
+				return ec.fieldContext_Subtask_parent_task(ctx, field)
+			case "content":
+				return ec.fieldContext_Subtask_content(ctx, field)
+			case "done":
+				return ec.fieldContext_Subtask_done(ctx, field)
+			case "due":
+				return ec.fieldContext_Subtask_due(ctx, field)
+			case "assigned_at":
+				return ec.fieldContext_Subtask_assigned_at(ctx, field)
+			case "priority":
+				return ec.fieldContext_Subtask_priority(ctx, field)
+			case "archived":
+				return ec.fieldContext_Subtask_archived(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Subtask", field.Name)
 		},
 	}
 	return fc, nil
@@ -1979,6 +2071,76 @@ func (ec *executionContext) fieldContext_User_email(ctx context.Context, field g
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_tasks(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_tasks(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Tasks, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Task)
+	fc.Result = res
+	return ec.marshalNTask2ᚕᚖgithubᚗcomᚋblackmax1886ᚋtas9ᚑapiᚋgraphᚋmodelᚐTaskᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_tasks(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Task_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Task_name(ctx, field)
+			case "content":
+				return ec.fieldContext_Task_content(ctx, field)
+			case "done":
+				return ec.fieldContext_Task_done(ctx, field)
+			case "due":
+				return ec.fieldContext_Task_due(ctx, field)
+			case "assigned_at":
+				return ec.fieldContext_Task_assigned_at(ctx, field)
+			case "group":
+				return ec.fieldContext_Task_group(ctx, field)
+			case "type":
+				return ec.fieldContext_Task_type(ctx, field)
+			case "priority":
+				return ec.fieldContext_Task_priority(ctx, field)
+			case "archived":
+				return ec.fieldContext_Task_archived(ctx, field)
+			case "user":
+				return ec.fieldContext_Task_user(ctx, field)
+			case "subtasks":
+				return ec.fieldContext_Task_subtasks(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Task", field.Name)
 		},
 	}
 	return fc, nil
@@ -4114,6 +4276,13 @@ func (ec *executionContext) _Task(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "subtasks":
+
+			out.Values[i] = ec._Task_subtasks(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -4152,6 +4321,13 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 		case "email":
 
 			out.Values[i] = ec._User_email(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "tasks":
+
+			out.Values[i] = ec._User_tasks(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++

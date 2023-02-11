@@ -8,7 +8,7 @@ import (
 	"context"
 
 	"github.com/blackmax1886/tas9-api/graph/model"
-	"github.com/oklog/ulid/v2"
+	ulid "github.com/oklog/ulid/v2"
 )
 
 // CreateUser is the resolver for the createUser field.
