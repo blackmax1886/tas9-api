@@ -6,23 +6,22 @@ package graph
 
 import (
 	"context"
-	"fmt"
-	"strconv"
 
-	"github.com/blackmax1886/tas9-api/graph/entity"
 	"github.com/blackmax1886/tas9-api/graph/model"
+	"github.com/oklog/ulid/v2"
 )
 
 // CreateUser is the resolver for the createUser field.
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (*model.User, error) {
-	user := entity.User{
+	user := model.User{
+		ID:    ulid.Make().String(),
 		Name:  input.Name,
 		Email: input.Email,
 	}
 	if err := r.DB.Create(&user).Error; err != nil {
 		return nil, err
 	}
-	return entity.NewUserFromEntity(&user), nil
+	return &user, nil
 }
 
 // CreateTask is the resolver for the createTask field.
@@ -32,20 +31,12 @@ func (r *mutationResolver) CreateTask(ctx context.Context, input model.NewTask) 
 
 // User is the resolver for the user field.
 func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error) {
-	userID, err := strconv.Atoi(id)
-	if err != nil {
-		return nil, err
-	}
-	var u entity.User
-	if err := r.DB.Find(&u, userID).Error; err != nil {
+	var user model.User
+	if err := r.DB.Find(&user, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
-	return &model.User{
-		ID:    fmt.Sprintf("%d", u.ID),
-		Name:  u.Name,
-		Email: u.Email,
-	}, nil
+	return &user, nil
 }
 
 // Tasks is the resolver for the tasks field.
