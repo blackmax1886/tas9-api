@@ -84,6 +84,16 @@ func (r *queryResolver) Subtasks(ctx context.Context, taskID *string) ([]*model.
 	return subtasks, nil
 }
 
+// UserByEmail is the resolver for the userByEmail field.
+func (r *queryResolver) UserByEmail(ctx context.Context, email string) (*model.User, error) {
+	var user model.User
+	if err := r.DB.Find(&user, "email = ?", email).Error; err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
