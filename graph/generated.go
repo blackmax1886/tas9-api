@@ -48,13 +48,15 @@ type ComplexityRoot struct {
 		CreateSubTask func(childComplexity int, input model.NewSubtask) int
 		CreateTask    func(childComplexity int, input model.NewTask) int
 		CreateUser    func(childComplexity int, input model.NewUser) int
+		LinkAccount   func(childComplexity int, input *model.AccountOfUser) int
 	}
 
 	Query struct {
-		Subtasks    func(childComplexity int, taskID *string) int
-		Tasks       func(childComplexity int, userID *string) int
-		User        func(childComplexity int, id string) int
-		UserByEmail func(childComplexity int, email string) int
+		Subtasks      func(childComplexity int, taskID *string) int
+		Tasks         func(childComplexity int, userID *string) int
+		User          func(childComplexity int, id string) int
+		UserByAccount func(childComplexity int, providerAccountID string) int
+		UserByEmail   func(childComplexity int, email string) int
 	}
 
 	Subtask struct {
@@ -85,10 +87,11 @@ type ComplexityRoot struct {
 	}
 
 	User struct {
-		Email func(childComplexity int) int
-		ID    func(childComplexity int) int
-		Name  func(childComplexity int) int
-		Tasks func(childComplexity int) int
+		Email    func(childComplexity int) int
+		GoogleId func(childComplexity int) int
+		ID       func(childComplexity int) int
+		Name     func(childComplexity int) int
+		Tasks    func(childComplexity int) int
 	}
 }
 
@@ -96,12 +99,14 @@ type MutationResolver interface {
 	CreateUser(ctx context.Context, input model.NewUser) (*model.User, error)
 	CreateTask(ctx context.Context, input model.NewTask) (*model.Task, error)
 	CreateSubTask(ctx context.Context, input model.NewSubtask) (*model.Subtask, error)
+	LinkAccount(ctx context.Context, input *model.AccountOfUser) (*model.User, error)
 }
 type QueryResolver interface {
 	User(ctx context.Context, id string) (*model.User, error)
 	Tasks(ctx context.Context, userID *string) ([]*model.Task, error)
 	Subtasks(ctx context.Context, taskID *string) ([]*model.Subtask, error)
 	UserByEmail(ctx context.Context, email string) (*model.User, error)
+	UserByAccount(ctx context.Context, providerAccountID string) (*model.User, error)
 }
 
 type executableSchema struct {
@@ -155,6 +160,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateUser(childComplexity, args["input"].(model.NewUser)), true
 
+	case "Mutation.linkAccount":
+		if e.complexity.Mutation.LinkAccount == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_linkAccount_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.LinkAccount(childComplexity, args["input"].(*model.AccountOfUser)), true
+
 	case "Query.subtasks":
 		if e.complexity.Query.Subtasks == nil {
 			break
@@ -190,6 +207,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.User(childComplexity, args["id"].(string)), true
+
+	case "Query.userByAccount":
+		if e.complexity.Query.UserByAccount == nil {
+			break
+		}
+
+		args, err := ec.field_Query_userByAccount_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.UserByAccount(childComplexity, args["providerAccountId"].(string)), true
 
 	case "Query.userByEmail":
 		if e.complexity.Query.UserByEmail == nil {
@@ -357,6 +386,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.Email(childComplexity), true
 
+	case "User.googleId":
+		if e.complexity.User.GoogleId == nil {
+			break
+		}
+
+		return e.complexity.User.GoogleId(childComplexity), true
+
 	case "User.id":
 		if e.complexity.User.ID == nil {
 			break
@@ -386,6 +422,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	rc := graphql.GetOperationContext(ctx)
 	ec := executionContext{rc, e}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
+		ec.unmarshalInputAccountOfUser,
 		ec.unmarshalInputNewSubtask,
 		ec.unmarshalInputNewTask,
 		ec.unmarshalInputNewUser,
@@ -513,6 +550,21 @@ func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, 
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_linkAccount_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *model.AccountOfUser
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalOAccountOfUser2ᚖgithubᚗcomᚋblackmax1886ᚋtas9ᚑapiᚋgraphᚋmodelᚐAccountOfUser(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -555,6 +607,21 @@ func (ec *executionContext) field_Query_tasks_args(ctx context.Context, rawArgs 
 		}
 	}
 	args["userId"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_userByAccount_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["providerAccountId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("providerAccountId"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["providerAccountId"] = arg0
 	return args, nil
 }
 
@@ -672,6 +739,8 @@ func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context
 				return ec.fieldContext_User_email(ctx, field)
 			case "tasks":
 				return ec.fieldContext_User_tasks(ctx, field)
+			case "googleId":
+				return ec.fieldContext_User_googleId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -844,6 +913,72 @@ func (ec *executionContext) fieldContext_Mutation_createSubTask(ctx context.Cont
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_linkAccount(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_linkAccount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().LinkAccount(rctx, fc.Args["input"].(*model.AccountOfUser))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖgithubᚗcomᚋblackmax1886ᚋtas9ᚑapiᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_linkAccount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "name":
+				return ec.fieldContext_User_name(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "tasks":
+				return ec.fieldContext_User_tasks(ctx, field)
+			case "googleId":
+				return ec.fieldContext_User_googleId(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_linkAccount_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_user(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_user(ctx, field)
 	if err != nil {
@@ -890,6 +1025,8 @@ func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field g
 				return ec.fieldContext_User_email(ctx, field)
 			case "tasks":
 				return ec.fieldContext_User_tasks(ctx, field)
+			case "googleId":
+				return ec.fieldContext_User_googleId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -1108,6 +1245,8 @@ func (ec *executionContext) fieldContext_Query_userByEmail(ctx context.Context, 
 				return ec.fieldContext_User_email(ctx, field)
 			case "tasks":
 				return ec.fieldContext_User_tasks(ctx, field)
+			case "googleId":
+				return ec.fieldContext_User_googleId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -1120,6 +1259,72 @@ func (ec *executionContext) fieldContext_Query_userByEmail(ctx context.Context, 
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_userByEmail_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_userByAccount(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_userByAccount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().UserByAccount(rctx, fc.Args["providerAccountId"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖgithubᚗcomᚋblackmax1886ᚋtas9ᚑapiᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_userByAccount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "name":
+				return ec.fieldContext_User_name(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "tasks":
+				return ec.fieldContext_User_tasks(ctx, field)
+			case "googleId":
+				return ec.fieldContext_User_googleId(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_userByAccount_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -2132,6 +2337,8 @@ func (ec *executionContext) fieldContext_Task_user(ctx context.Context, field gr
 				return ec.fieldContext_User_email(ctx, field)
 			case "tasks":
 				return ec.fieldContext_User_tasks(ctx, field)
+			case "googleId":
+				return ec.fieldContext_User_googleId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -2400,6 +2607,47 @@ func (ec *executionContext) fieldContext_User_tasks(ctx context.Context, field g
 				return ec.fieldContext_Task_subtasks(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Task", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_googleId(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_googleId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GoogleId, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_googleId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -4178,6 +4426,50 @@ func (ec *executionContext) fieldContext___Type_specifiedByURL(ctx context.Conte
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputAccountOfUser(ctx context.Context, obj interface{}) (model.AccountOfUser, error) {
+	var it model.AccountOfUser
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"userId", "provider", "providerAccountId"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "userId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
+			it.UserID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "provider":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("provider"))
+			it.Provider, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "providerAccountId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("providerAccountId"))
+			it.ProviderAccountID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputNewSubtask(ctx context.Context, obj interface{}) (model.NewSubtask, error) {
 	var it model.NewSubtask
 	asMap := map[string]interface{}{}
@@ -4346,6 +4638,12 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 				return ec._Mutation_createSubTask(ctx, field)
 			})
 
+		case "linkAccount":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_linkAccount(ctx, field)
+			})
+
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -4442,6 +4740,26 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_userByEmail(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "userByAccount":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_userByAccount(ctx, field)
 				return res
 			}
 
@@ -4669,6 +4987,10 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "googleId":
+
+			out.Values[i] = ec._User_googleId(ctx, field, obj)
+
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -5441,6 +5763,14 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 	return res
 }
 
+func (ec *executionContext) unmarshalOAccountOfUser2ᚖgithubᚗcomᚋblackmax1886ᚋtas9ᚑapiᚋgraphᚋmodelᚐAccountOfUser(ctx context.Context, v interface{}) (*model.AccountOfUser, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputAccountOfUser(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalOBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
 	res, err := graphql.UnmarshalBoolean(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -5464,6 +5794,16 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 		return graphql.Null
 	}
 	res := graphql.MarshalBoolean(*v)
+	return res
+}
+
+func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {
+	res, err := graphql.UnmarshalString(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOString2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
+	res := graphql.MarshalString(v)
 	return res
 }
 

@@ -2,6 +2,12 @@
 
 package model
 
+type AccountOfUser struct {
+	UserID            string `json:"userId"`
+	Provider          string `json:"provider"`
+	ProviderAccountID string `json:"providerAccountId"`
+}
+
 type NewSubtask struct {
 	Name    string  `json:"name"`
 	Content *string `json:"content"`

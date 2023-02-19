@@ -56,6 +56,21 @@ func (r *mutationResolver) CreateSubTask(ctx context.Context, input model.NewSub
 	return &subtask, nil
 }
 
+// LinkAccount is the resolver for the linkAccount field.
+func (r *mutationResolver) LinkAccount(ctx context.Context, input *model.AccountOfUser) (*model.User, error) {
+	var user model.User
+	switch input.Provider {
+	case "google":
+		err := r.DB.Find(&user, "id = ?", input.UserID).Update("google_id", input.ProviderAccountID).Error
+		if err != nil {
+			return nil, err
+		}
+		return &user, nil
+	default:
+		panic("This provider is not supported")
+	}
+}
+
 // User is the resolver for the user field.
 func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error) {
 	var user model.User
@@ -94,6 +109,15 @@ func (r *queryResolver) UserByEmail(ctx context.Context, email string) (*model.U
 	return &user, nil
 }
 
+// UserByAccount is the resolver for the userByAccount field.
+func (r *queryResolver) UserByAccount(ctx context.Context, providerAccountID string) (*model.User, error) {
+	var user model.User
+	if err := r.DB.Find(&user, "google_id = ?", providerAccountID).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
@@ -102,3 +126,4 @@ func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+type userResolver struct{ *Resolver }
