@@ -46,8 +46,8 @@ type Query {
 }
 
 input NewUser {
-  Name: String!
-  Email: String!
+  name: String!
+  email: String!
 }
 
 input NewTask {

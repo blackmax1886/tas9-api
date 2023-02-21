@@ -21,6 +21,6 @@ type NewTask struct {
 }
 
 type NewUser struct {
-	Name  string `json:"Name"`
-	Email string `json:"Email"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
 }
