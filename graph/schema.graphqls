@@ -19,7 +19,7 @@ type Task {
 
 type User {
   id: ID!
-  name: String!
+  name: String
   email: String!
   tasks: [Task!]!
   googleId: String
@@ -46,7 +46,7 @@ type Query {
 }
 
 input NewUser {
-  name: String!
+  name: String
   email: String!
 }
 
