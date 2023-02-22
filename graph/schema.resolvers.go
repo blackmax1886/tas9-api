@@ -6,6 +6,7 @@ package graph
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/blackmax1886/tas9-api/graph/model"
 	ulid "github.com/oklog/ulid/v2"
@@ -57,7 +58,7 @@ func (r *mutationResolver) CreateSubTask(ctx context.Context, input model.NewSub
 }
 
 // LinkAccount is the resolver for the linkAccount field.
-func (r *mutationResolver) LinkAccount(ctx context.Context, input *model.AccountOfUser) (*model.User, error) {
+func (r *mutationResolver) LinkAccount(ctx context.Context, input *model.Account) (*model.User, error) {
 	var user model.User
 	switch input.Provider {
 	case "google":
@@ -110,12 +111,17 @@ func (r *queryResolver) UserByEmail(ctx context.Context, email string) (*model.U
 }
 
 // UserByAccount is the resolver for the userByAccount field.
-func (r *queryResolver) UserByAccount(ctx context.Context, providerAccountID string) (*model.User, error) {
+func (r *queryResolver) UserByAccount(ctx context.Context, partialAccount model.PartialAccount) (*model.User, error) {
 	var user model.User
-	if err := r.DB.Find(&user, "google_id = ?", providerAccountID).Error; err != nil {
-		return nil, err
+	switch partialAccount.Provider {
+	case "google":
+		if err := r.DB.Find(&user, "google_id = ?", partialAccount.ProviderAccountID).Error; err != nil {
+			return nil, err
+		}
+		return &user, nil
+	default:
+		return nil, fmt.Errorf("This provider is not supported")
 	}
-	return &user, nil
 }
 
 // Mutation returns MutationResolver implementation.

@@ -42,7 +42,7 @@ type Query {
   tasks(userId: String): [Task!]!
   subtasks(taskId: String): [Subtask!]!
   userByEmail(email: String!): User!
-  userByAccount(providerAccountId: String!): User!
+  userByAccount(partialAccount: PartialAccount!): User!
 }
 
 input NewUser {
@@ -62,8 +62,13 @@ input NewSubtask {
   taskId: String!
 }
 
-input AccountOfUser {
+input Account {
   userId: String!
+  provider: String!
+  providerAccountId: String!
+}
+
+input PartialAccount {
   provider: String!
   providerAccountId: String!
 }
@@ -72,5 +77,5 @@ type Mutation {
   createUser(input: NewUser!): User!
   createTask(input: NewTask!): Task!
   createSubTask(input: NewSubtask!): Subtask!
-  linkAccount(input: AccountOfUser): User!
+  linkAccount(input: Account): User!
 }

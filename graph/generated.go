@@ -48,14 +48,14 @@ type ComplexityRoot struct {
 		CreateSubTask func(childComplexity int, input model.NewSubtask) int
 		CreateTask    func(childComplexity int, input model.NewTask) int
 		CreateUser    func(childComplexity int, input model.NewUser) int
-		LinkAccount   func(childComplexity int, input *model.AccountOfUser) int
+		LinkAccount   func(childComplexity int, input *model.Account) int
 	}
 
 	Query struct {
 		Subtasks      func(childComplexity int, taskID *string) int
 		Tasks         func(childComplexity int, userID *string) int
 		User          func(childComplexity int, id string) int
-		UserByAccount func(childComplexity int, providerAccountID string) int
+		UserByAccount func(childComplexity int, partialAccount model.PartialAccount) int
 		UserByEmail   func(childComplexity int, email string) int
 	}
 
@@ -99,14 +99,14 @@ type MutationResolver interface {
 	CreateUser(ctx context.Context, input model.NewUser) (*model.User, error)
 	CreateTask(ctx context.Context, input model.NewTask) (*model.Task, error)
 	CreateSubTask(ctx context.Context, input model.NewSubtask) (*model.Subtask, error)
-	LinkAccount(ctx context.Context, input *model.AccountOfUser) (*model.User, error)
+	LinkAccount(ctx context.Context, input *model.Account) (*model.User, error)
 }
 type QueryResolver interface {
 	User(ctx context.Context, id string) (*model.User, error)
 	Tasks(ctx context.Context, userID *string) ([]*model.Task, error)
 	Subtasks(ctx context.Context, taskID *string) ([]*model.Subtask, error)
 	UserByEmail(ctx context.Context, email string) (*model.User, error)
-	UserByAccount(ctx context.Context, providerAccountID string) (*model.User, error)
+	UserByAccount(ctx context.Context, partialAccount model.PartialAccount) (*model.User, error)
 }
 
 type executableSchema struct {
@@ -170,7 +170,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.LinkAccount(childComplexity, args["input"].(*model.AccountOfUser)), true
+		return e.complexity.Mutation.LinkAccount(childComplexity, args["input"].(*model.Account)), true
 
 	case "Query.subtasks":
 		if e.complexity.Query.Subtasks == nil {
@@ -218,7 +218,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.UserByAccount(childComplexity, args["providerAccountId"].(string)), true
+		return e.complexity.Query.UserByAccount(childComplexity, args["partialAccount"].(model.PartialAccount)), true
 
 	case "Query.userByEmail":
 		if e.complexity.Query.UserByEmail == nil {
@@ -422,10 +422,11 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	rc := graphql.GetOperationContext(ctx)
 	ec := executionContext{rc, e}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
-		ec.unmarshalInputAccountOfUser,
+		ec.unmarshalInputAccount,
 		ec.unmarshalInputNewSubtask,
 		ec.unmarshalInputNewTask,
 		ec.unmarshalInputNewUser,
+		ec.unmarshalInputPartialAccount,
 	)
 	first := true
 
@@ -553,10 +554,10 @@ func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, 
 func (ec *executionContext) field_Mutation_linkAccount_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.AccountOfUser
+	var arg0 *model.Account
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalOAccountOfUser2ᚖgithubᚗcomᚋblackmax1886ᚋtas9ᚑapiᚋgraphᚋmodelᚐAccountOfUser(ctx, tmp)
+		arg0, err = ec.unmarshalOAccount2ᚖgithubᚗcomᚋblackmax1886ᚋtas9ᚑapiᚋgraphᚋmodelᚐAccount(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -613,15 +614,15 @@ func (ec *executionContext) field_Query_tasks_args(ctx context.Context, rawArgs 
 func (ec *executionContext) field_Query_userByAccount_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["providerAccountId"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("providerAccountId"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+	var arg0 model.PartialAccount
+	if tmp, ok := rawArgs["partialAccount"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("partialAccount"))
+		arg0, err = ec.unmarshalNPartialAccount2githubᚗcomᚋblackmax1886ᚋtas9ᚑapiᚋgraphᚋmodelᚐPartialAccount(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["providerAccountId"] = arg0
+	args["partialAccount"] = arg0
 	return args, nil
 }
 
@@ -927,7 +928,7 @@ func (ec *executionContext) _Mutation_linkAccount(ctx context.Context, field gra
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().LinkAccount(rctx, fc.Args["input"].(*model.AccountOfUser))
+		return ec.resolvers.Mutation().LinkAccount(rctx, fc.Args["input"].(*model.Account))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1279,7 +1280,7 @@ func (ec *executionContext) _Query_userByAccount(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().UserByAccount(rctx, fc.Args["providerAccountId"].(string))
+		return ec.resolvers.Query().UserByAccount(rctx, fc.Args["partialAccount"].(model.PartialAccount))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4423,8 +4424,8 @@ func (ec *executionContext) fieldContext___Type_specifiedByURL(ctx context.Conte
 
 // region    **************************** input.gotpl *****************************
 
-func (ec *executionContext) unmarshalInputAccountOfUser(ctx context.Context, obj interface{}) (model.AccountOfUser, error) {
-	var it model.AccountOfUser
+func (ec *executionContext) unmarshalInputAccount(ctx context.Context, obj interface{}) (model.Account, error) {
+	var it model.Account
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -4582,6 +4583,42 @@ func (ec *executionContext) unmarshalInputNewUser(ctx context.Context, obj inter
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
 			it.Email, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputPartialAccount(ctx context.Context, obj interface{}) (model.PartialAccount, error) {
+	var it model.PartialAccount
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"provider", "providerAccountId"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "provider":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("provider"))
+			it.Provider, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "providerAccountId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("providerAccountId"))
+			it.ProviderAccountID, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -5359,6 +5396,11 @@ func (ec *executionContext) unmarshalNNewUser2githubᚗcomᚋblackmax1886ᚋtas9
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNPartialAccount2githubᚗcomᚋblackmax1886ᚋtas9ᚑapiᚋgraphᚋmodelᚐPartialAccount(ctx context.Context, v interface{}) (model.PartialAccount, error) {
+	res, err := ec.unmarshalInputPartialAccount(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
 	res, err := graphql.UnmarshalString(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -5757,11 +5799,11 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 	return res
 }
 
-func (ec *executionContext) unmarshalOAccountOfUser2ᚖgithubᚗcomᚋblackmax1886ᚋtas9ᚑapiᚋgraphᚋmodelᚐAccountOfUser(ctx context.Context, v interface{}) (*model.AccountOfUser, error) {
+func (ec *executionContext) unmarshalOAccount2ᚖgithubᚗcomᚋblackmax1886ᚋtas9ᚑapiᚋgraphᚋmodelᚐAccount(ctx context.Context, v interface{}) (*model.Account, error) {
 	if v == nil {
 		return nil, nil
 	}
-	res, err := ec.unmarshalInputAccountOfUser(ctx, v)
+	res, err := ec.unmarshalInputAccount(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 

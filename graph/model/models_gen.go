@@ -2,7 +2,7 @@
 
 package model
 
-type AccountOfUser struct {
+type Account struct {
 	UserID            string `json:"userId"`
 	Provider          string `json:"provider"`
 	ProviderAccountID string `json:"providerAccountId"`
@@ -23,4 +23,9 @@ type NewTask struct {
 type NewUser struct {
 	Name  *string `json:"name"`
 	Email string  `json:"email"`
+}
+
+type PartialAccount struct {
+	Provider          string `json:"provider"`
+	ProviderAccountID string `json:"providerAccountId"`
 }
