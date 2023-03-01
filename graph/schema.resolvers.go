@@ -6,10 +6,12 @@ package graph
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/blackmax1886/tas9-api/graph/model"
 	ulid "github.com/oklog/ulid/v2"
+	"gorm.io/gorm"
 )
 
 // CreateUser is the resolver for the createUser field.
@@ -115,7 +117,11 @@ func (r *queryResolver) UserByAccount(ctx context.Context, partialAccount model.
 	var user model.User
 	switch partialAccount.Provider {
 	case "google":
-		if err := r.DB.Find(&user, "google_id = ?", partialAccount.ProviderAccountID).Error; err != nil {
+		err := r.DB.Where("google_id = ?", partialAccount.ProviderAccountID).First(&user).Error
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		if err != nil {
 			return nil, err
 		}
 		return &user, nil

@@ -38,11 +38,11 @@ type Subtask {
 }
 
 type Query {
-  user(id: String!): User!
+  user(id: String!): User
   tasks(userId: String): [Task!]!
   subtasks(taskId: String): [Subtask!]!
-  userByEmail(email: String!): User!
-  userByAccount(partialAccount: PartialAccount!): User!
+  userByEmail(email: String!): User
+  userByAccount(partialAccount: PartialAccount!): User
 }
 
 input NewUser {
