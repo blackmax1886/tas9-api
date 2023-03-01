@@ -105,7 +105,11 @@ func (r *queryResolver) Subtasks(ctx context.Context, taskID *string) ([]*model.
 // UserByEmail is the resolver for the userByEmail field.
 func (r *queryResolver) UserByEmail(ctx context.Context, email string) (*model.User, error) {
 	var user model.User
-	if err := r.DB.Find(&user, "email = ?", email).Error; err != nil {
+	err := r.DB.Where("email = ?", email).First(&user).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, nil
+	}
+	if err != nil {
 		return nil, err
 	}
 
