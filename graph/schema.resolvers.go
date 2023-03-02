@@ -9,7 +9,7 @@ import (
 	"errors"
 	"fmt"
 
-	model "github.com/blackmax1886/tas9-api/graph/model"
+	"github.com/blackmax1886/tas9-api/graph/model"
 	ulid "github.com/oklog/ulid/v2"
 	"gorm.io/gorm"
 )
