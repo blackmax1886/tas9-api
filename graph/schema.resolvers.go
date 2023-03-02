@@ -9,7 +9,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/blackmax1886/tas9-api/graph/model"
+	model "github.com/blackmax1886/tas9-api/graph/model"
 	ulid "github.com/oklog/ulid/v2"
 	"gorm.io/gorm"
 )
@@ -17,9 +17,11 @@ import (
 // CreateUser is the resolver for the createUser field.
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (*model.User, error) {
 	user := model.User{
-		ID:    ulid.Make().String(),
-		Name:  input.Name,
-		Email: input.Email,
+		ID:            ulid.Make().String(),
+		Name:          input.Name,
+		Email:         input.Email,
+		Image:         input.Image,
+		EmailVerified: input.EmailVerified,
 	}
 	if err := r.DB.Create(&user).Error; err != nil {
 		return nil, err

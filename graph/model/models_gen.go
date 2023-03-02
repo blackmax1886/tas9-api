@@ -21,8 +21,10 @@ type NewTask struct {
 }
 
 type NewUser struct {
-	Name  *string `json:"name"`
-	Email string  `json:"email"`
+	Name          *string `json:"name"`
+	Email         string  `json:"email"`
+	Image         *string `json:"image"`
+	EmailVerified *string `json:"emailVerified"`
 }
 
 type PartialAccount struct {

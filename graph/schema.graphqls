@@ -23,6 +23,8 @@ type User {
   email: String!
   tasks: [Task!]!
   googleId: String
+  image: String
+  emailVerified: String
 }
 
 type Subtask {
@@ -48,6 +50,8 @@ type Query {
 input NewUser {
   name: String
   email: String!
+  image: String
+  emailVerified: String
 }
 
 input NewTask {
