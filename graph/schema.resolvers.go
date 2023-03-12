@@ -89,7 +89,7 @@ func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error
 // Tasks is the resolver for the tasks field.
 func (r *queryResolver) Tasks(ctx context.Context, userID *string) ([]*model.Task, error) {
 	var tasks []*model.Task
-	if err := r.DB.Find(&tasks, "user_id = ?", userID).Error; err != nil {
+	if err := r.DB.Order("id DESC").Find(&tasks, "user_id = ?", userID).Error; err != nil {
 		return nil, err
 	}
 	return tasks, nil
