@@ -76,6 +76,16 @@ func (r *mutationResolver) LinkAccount(ctx context.Context, input *model.Account
 	}
 }
 
+// UpdateTaskIsDone is the resolver for the updateTaskIsDone field.
+func (r *mutationResolver) UpdateTaskIsDone(ctx context.Context, id string, isDone bool) (*model.Task, error) {
+	var task model.Task
+	err := r.DB.Find(&task, "id = ?", id).Update("done", isDone).Error
+	if err != nil {
+		return nil, err
+	}
+	return &task, nil
+}
+
 // User is the resolver for the user field.
 func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error) {
 	var user model.User

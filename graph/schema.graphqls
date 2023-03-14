@@ -82,4 +82,5 @@ type Mutation {
   createTask(input: NewTask!): Task!
   createSubTask(input: NewSubtask!): Subtask!
   linkAccount(input: Account): User!
+  updateTaskIsDone(id: ID!, isDone: Boolean!): Task!
 }

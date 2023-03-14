@@ -45,10 +45,11 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Mutation struct {
-		CreateSubTask func(childComplexity int, input model.NewSubtask) int
-		CreateTask    func(childComplexity int, input model.NewTask) int
-		CreateUser    func(childComplexity int, input model.NewUser) int
-		LinkAccount   func(childComplexity int, input *model.Account) int
+		CreateSubTask    func(childComplexity int, input model.NewSubtask) int
+		CreateTask       func(childComplexity int, input model.NewTask) int
+		CreateUser       func(childComplexity int, input model.NewUser) int
+		LinkAccount      func(childComplexity int, input *model.Account) int
+		UpdateTaskIsDone func(childComplexity int, id string, isDone bool) int
 	}
 
 	Query struct {
@@ -102,6 +103,7 @@ type MutationResolver interface {
 	CreateTask(ctx context.Context, input model.NewTask) (*model.Task, error)
 	CreateSubTask(ctx context.Context, input model.NewSubtask) (*model.Subtask, error)
 	LinkAccount(ctx context.Context, input *model.Account) (*model.User, error)
+	UpdateTaskIsDone(ctx context.Context, id string, isDone bool) (*model.Task, error)
 }
 type QueryResolver interface {
 	User(ctx context.Context, id string) (*model.User, error)
@@ -173,6 +175,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.LinkAccount(childComplexity, args["input"].(*model.Account)), true
+
+	case "Mutation.updateTaskIsDone":
+		if e.complexity.Mutation.UpdateTaskIsDone == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateTaskIsDone_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateTaskIsDone(childComplexity, args["id"].(string), args["isDone"].(bool)), true
 
 	case "Query.subtasks":
 		if e.complexity.Query.Subtasks == nil {
@@ -579,6 +593,30 @@ func (ec *executionContext) field_Mutation_linkAccount_args(ctx context.Context,
 		}
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateTaskIsDone_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	var arg1 bool
+	if tmp, ok := rawArgs["isDone"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isDone"))
+		arg1, err = ec.unmarshalNBoolean2bool(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["isDone"] = arg1
 	return args, nil
 }
 
@@ -998,6 +1036,86 @@ func (ec *executionContext) fieldContext_Mutation_linkAccount(ctx context.Contex
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_linkAccount_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateTaskIsDone(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateTaskIsDone(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateTaskIsDone(rctx, fc.Args["id"].(string), fc.Args["isDone"].(bool))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Task)
+	fc.Result = res
+	return ec.marshalNTask2ᚖgithubᚗcomᚋblackmax1886ᚋtas9ᚑapiᚋgraphᚋmodelᚐTask(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateTaskIsDone(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Task_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Task_name(ctx, field)
+			case "content":
+				return ec.fieldContext_Task_content(ctx, field)
+			case "done":
+				return ec.fieldContext_Task_done(ctx, field)
+			case "due":
+				return ec.fieldContext_Task_due(ctx, field)
+			case "assigned_at":
+				return ec.fieldContext_Task_assigned_at(ctx, field)
+			case "group":
+				return ec.fieldContext_Task_group(ctx, field)
+			case "type":
+				return ec.fieldContext_Task_type(ctx, field)
+			case "priority":
+				return ec.fieldContext_Task_priority(ctx, field)
+			case "archived":
+				return ec.fieldContext_Task_archived(ctx, field)
+			case "user":
+				return ec.fieldContext_Task_user(ctx, field)
+			case "subtasks":
+				return ec.fieldContext_Task_subtasks(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Task", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateTaskIsDone_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -4805,6 +4923,12 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_linkAccount(ctx, field)
+			})
+
+		case "updateTaskIsDone":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateTaskIsDone(ctx, field)
 			})
 
 		default:
