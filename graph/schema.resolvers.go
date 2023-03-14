@@ -159,6 +159,16 @@ func (r *queryResolver) UserByAccount(ctx context.Context, partialAccount model.
 	}
 }
 
+// Task is the resolver for the task field.
+func (r *queryResolver) Task(ctx context.Context, id string) (*model.Task, error) {
+	var task model.Task
+	err := r.DB.Find(&task, "id = ?", id).Error
+	if err != nil {
+		return nil, err
+	}
+	return &task, nil
+}
+
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
