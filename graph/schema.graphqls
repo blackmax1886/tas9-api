@@ -85,4 +85,5 @@ type Mutation {
   linkAccount(input: Account): User!
   updateTaskIsDone(id: String!, isDone: Boolean!): Task!
   deleteTask(id: String!): Task
+  updateTaskContent(id: String!, content: String!): Task!
 }

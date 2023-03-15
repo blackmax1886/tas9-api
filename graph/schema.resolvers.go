@@ -99,6 +99,16 @@ func (r *mutationResolver) DeleteTask(ctx context.Context, id string) (*model.Ta
 	return nil, nil
 }
 
+// UpdateTaskContent is the resolver for the updateTaskContent field.
+func (r *mutationResolver) UpdateTaskContent(ctx context.Context, id string, content string) (*model.Task, error) {
+	var task model.Task
+	err := r.DB.Find(&task, "id = ?", id).Update("content", content).Error
+	if err != nil {
+		return nil, err
+	}
+	return &task, nil
+}
+
 // User is the resolver for the user field.
 func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error) {
 	var user model.User
