@@ -109,10 +109,13 @@ func (r *mutationResolver) UpdateTaskContent(ctx context.Context, id string, con
 	return &task, nil
 }
 
-// UpdateTaskAssignedAt is the resolver for the updateTaskAssignedAt field.
-func (r *mutationResolver) UpdateTaskAssignedAt(ctx context.Context, id string, assignedAt string) (*model.Task, error) {
+// UpdateTaskStartEnd is the resolver for the updateTaskStartEnd field.
+func (r *mutationResolver) UpdateTaskStartEnd(ctx context.Context, id string, start string, end string) (*model.Task, error) {
 	var task model.Task
-	err := r.DB.Find(&task, "id = ?", id).Update("assigned_at", assignedAt).Error
+	err := r.DB.Find(&task, "id = ?", id).Updates(map[string]interface{}{
+		"start": start,
+		"end":   end,
+	}).Error
 	if err != nil {
 		return nil, err
 	}
