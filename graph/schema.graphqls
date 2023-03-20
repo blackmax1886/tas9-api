@@ -86,4 +86,5 @@ type Mutation {
   updateTaskIsDone(id: String!, isDone: Boolean!): Task!
   deleteTask(id: String!): Task
   updateTaskContent(id: String!, content: String!): Task!
+  updateTaskAssignedAt(id: String!, assigned_at: String!): Task!
 }
