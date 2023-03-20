@@ -206,7 +206,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateTaskAssignedAt(childComplexity, args["id"].(string), args["assigned_at"].(string)), true
+		return e.complexity.Mutation.UpdateTaskAssignedAt(childComplexity, args["id"].(string), args["assignedAt"].(string)), true
 
 	case "Mutation.updateTaskContent":
 		if e.complexity.Mutation.UpdateTaskContent == nil {
@@ -311,7 +311,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Subtask.Archived(childComplexity), true
 
-	case "Subtask.assigned_at":
+	case "Subtask.assignedAt":
 		if e.complexity.Subtask.AssignedAt == nil {
 			break
 		}
@@ -374,7 +374,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Task.Archived(childComplexity), true
 
-	case "Task.assigned_at":
+	case "Task.assignedAt":
 		if e.complexity.Task.AssignedAt == nil {
 			break
 		}
@@ -680,14 +680,14 @@ func (ec *executionContext) field_Mutation_updateTaskAssignedAt_args(ctx context
 	}
 	args["id"] = arg0
 	var arg1 string
-	if tmp, ok := rawArgs["assigned_at"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("assigned_at"))
+	if tmp, ok := rawArgs["assignedAt"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("assignedAt"))
 		arg1, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["assigned_at"] = arg1
+	args["assignedAt"] = arg1
 	return args, nil
 }
 
@@ -1000,8 +1000,8 @@ func (ec *executionContext) fieldContext_Mutation_createTask(ctx context.Context
 				return ec.fieldContext_Task_done(ctx, field)
 			case "due":
 				return ec.fieldContext_Task_due(ctx, field)
-			case "assigned_at":
-				return ec.fieldContext_Task_assigned_at(ctx, field)
+			case "assignedAt":
+				return ec.fieldContext_Task_assignedAt(ctx, field)
 			case "group":
 				return ec.fieldContext_Task_group(ctx, field)
 			case "type":
@@ -1082,8 +1082,8 @@ func (ec *executionContext) fieldContext_Mutation_createSubTask(ctx context.Cont
 				return ec.fieldContext_Subtask_done(ctx, field)
 			case "due":
 				return ec.fieldContext_Subtask_due(ctx, field)
-			case "assigned_at":
-				return ec.fieldContext_Subtask_assigned_at(ctx, field)
+			case "assignedAt":
+				return ec.fieldContext_Subtask_assignedAt(ctx, field)
 			case "priority":
 				return ec.fieldContext_Subtask_priority(ctx, field)
 			case "archived":
@@ -1224,8 +1224,8 @@ func (ec *executionContext) fieldContext_Mutation_updateTaskIsDone(ctx context.C
 				return ec.fieldContext_Task_done(ctx, field)
 			case "due":
 				return ec.fieldContext_Task_due(ctx, field)
-			case "assigned_at":
-				return ec.fieldContext_Task_assigned_at(ctx, field)
+			case "assignedAt":
+				return ec.fieldContext_Task_assignedAt(ctx, field)
 			case "group":
 				return ec.fieldContext_Task_group(ctx, field)
 			case "type":
@@ -1301,8 +1301,8 @@ func (ec *executionContext) fieldContext_Mutation_deleteTask(ctx context.Context
 				return ec.fieldContext_Task_done(ctx, field)
 			case "due":
 				return ec.fieldContext_Task_due(ctx, field)
-			case "assigned_at":
-				return ec.fieldContext_Task_assigned_at(ctx, field)
+			case "assignedAt":
+				return ec.fieldContext_Task_assignedAt(ctx, field)
 			case "group":
 				return ec.fieldContext_Task_group(ctx, field)
 			case "type":
@@ -1381,8 +1381,8 @@ func (ec *executionContext) fieldContext_Mutation_updateTaskContent(ctx context.
 				return ec.fieldContext_Task_done(ctx, field)
 			case "due":
 				return ec.fieldContext_Task_due(ctx, field)
-			case "assigned_at":
-				return ec.fieldContext_Task_assigned_at(ctx, field)
+			case "assignedAt":
+				return ec.fieldContext_Task_assignedAt(ctx, field)
 			case "group":
 				return ec.fieldContext_Task_group(ctx, field)
 			case "type":
@@ -1427,7 +1427,7 @@ func (ec *executionContext) _Mutation_updateTaskAssignedAt(ctx context.Context, 
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateTaskAssignedAt(rctx, fc.Args["id"].(string), fc.Args["assigned_at"].(string))
+		return ec.resolvers.Mutation().UpdateTaskAssignedAt(rctx, fc.Args["id"].(string), fc.Args["assignedAt"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1461,8 +1461,8 @@ func (ec *executionContext) fieldContext_Mutation_updateTaskAssignedAt(ctx conte
 				return ec.fieldContext_Task_done(ctx, field)
 			case "due":
 				return ec.fieldContext_Task_due(ctx, field)
-			case "assigned_at":
-				return ec.fieldContext_Task_assigned_at(ctx, field)
+			case "assignedAt":
+				return ec.fieldContext_Task_assignedAt(ctx, field)
 			case "group":
 				return ec.fieldContext_Task_group(ctx, field)
 			case "type":
@@ -1608,8 +1608,8 @@ func (ec *executionContext) fieldContext_Query_tasks(ctx context.Context, field 
 				return ec.fieldContext_Task_done(ctx, field)
 			case "due":
 				return ec.fieldContext_Task_due(ctx, field)
-			case "assigned_at":
-				return ec.fieldContext_Task_assigned_at(ctx, field)
+			case "assignedAt":
+				return ec.fieldContext_Task_assignedAt(ctx, field)
 			case "group":
 				return ec.fieldContext_Task_group(ctx, field)
 			case "type":
@@ -1690,8 +1690,8 @@ func (ec *executionContext) fieldContext_Query_subtasks(ctx context.Context, fie
 				return ec.fieldContext_Subtask_done(ctx, field)
 			case "due":
 				return ec.fieldContext_Subtask_due(ctx, field)
-			case "assigned_at":
-				return ec.fieldContext_Subtask_assigned_at(ctx, field)
+			case "assignedAt":
+				return ec.fieldContext_Subtask_assignedAt(ctx, field)
 			case "priority":
 				return ec.fieldContext_Subtask_priority(ctx, field)
 			case "archived":
@@ -1896,8 +1896,8 @@ func (ec *executionContext) fieldContext_Query_task(ctx context.Context, field g
 				return ec.fieldContext_Task_done(ctx, field)
 			case "due":
 				return ec.fieldContext_Task_due(ctx, field)
-			case "assigned_at":
-				return ec.fieldContext_Task_assigned_at(ctx, field)
+			case "assignedAt":
+				return ec.fieldContext_Task_assignedAt(ctx, field)
 			case "group":
 				return ec.fieldContext_Task_group(ctx, field)
 			case "type":
@@ -2192,8 +2192,8 @@ func (ec *executionContext) fieldContext_Subtask_task(ctx context.Context, field
 				return ec.fieldContext_Task_done(ctx, field)
 			case "due":
 				return ec.fieldContext_Task_due(ctx, field)
-			case "assigned_at":
-				return ec.fieldContext_Task_assigned_at(ctx, field)
+			case "assignedAt":
+				return ec.fieldContext_Task_assignedAt(ctx, field)
 			case "group":
 				return ec.fieldContext_Task_group(ctx, field)
 			case "type":
@@ -2339,8 +2339,8 @@ func (ec *executionContext) fieldContext_Subtask_due(ctx context.Context, field 
 	return fc, nil
 }
 
-func (ec *executionContext) _Subtask_assigned_at(ctx context.Context, field graphql.CollectedField, obj *model.Subtask) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Subtask_assigned_at(ctx, field)
+func (ec *executionContext) _Subtask_assignedAt(ctx context.Context, field graphql.CollectedField, obj *model.Subtask) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subtask_assignedAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -2367,7 +2367,7 @@ func (ec *executionContext) _Subtask_assigned_at(ctx context.Context, field grap
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Subtask_assigned_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Subtask_assignedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Subtask",
 		Field:      field,
@@ -2679,8 +2679,8 @@ func (ec *executionContext) fieldContext_Task_due(ctx context.Context, field gra
 	return fc, nil
 }
 
-func (ec *executionContext) _Task_assigned_at(ctx context.Context, field graphql.CollectedField, obj *model.Task) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Task_assigned_at(ctx, field)
+func (ec *executionContext) _Task_assignedAt(ctx context.Context, field graphql.CollectedField, obj *model.Task) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Task_assignedAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -2707,7 +2707,7 @@ func (ec *executionContext) _Task_assigned_at(ctx context.Context, field graphql
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Task_assigned_at(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Task_assignedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Task",
 		Field:      field,
@@ -2998,8 +2998,8 @@ func (ec *executionContext) fieldContext_Task_subtasks(ctx context.Context, fiel
 				return ec.fieldContext_Subtask_done(ctx, field)
 			case "due":
 				return ec.fieldContext_Subtask_due(ctx, field)
-			case "assigned_at":
-				return ec.fieldContext_Subtask_assigned_at(ctx, field)
+			case "assignedAt":
+				return ec.fieldContext_Subtask_assignedAt(ctx, field)
 			case "priority":
 				return ec.fieldContext_Subtask_priority(ctx, field)
 			case "archived":
@@ -3189,8 +3189,8 @@ func (ec *executionContext) fieldContext_User_tasks(ctx context.Context, field g
 				return ec.fieldContext_Task_done(ctx, field)
 			case "due":
 				return ec.fieldContext_Task_due(ctx, field)
-			case "assigned_at":
-				return ec.fieldContext_Task_assigned_at(ctx, field)
+			case "assignedAt":
+				return ec.fieldContext_Task_assignedAt(ctx, field)
 			case "group":
 				return ec.fieldContext_Task_group(ctx, field)
 			case "type":
@@ -5612,9 +5612,9 @@ func (ec *executionContext) _Subtask(ctx context.Context, sel ast.SelectionSet, 
 
 			out.Values[i] = ec._Subtask_due(ctx, field, obj)
 
-		case "assigned_at":
+		case "assignedAt":
 
-			out.Values[i] = ec._Subtask_assigned_at(ctx, field, obj)
+			out.Values[i] = ec._Subtask_assignedAt(ctx, field, obj)
 
 		case "priority":
 
@@ -5677,9 +5677,9 @@ func (ec *executionContext) _Task(ctx context.Context, sel ast.SelectionSet, obj
 
 			out.Values[i] = ec._Task_due(ctx, field, obj)
 
-		case "assigned_at":
+		case "assignedAt":
 
-			out.Values[i] = ec._Task_assigned_at(ctx, field, obj)
+			out.Values[i] = ec._Task_assignedAt(ctx, field, obj)
 
 		case "group":
 

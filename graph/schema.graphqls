@@ -8,7 +8,7 @@ type Task {
   content: String
   done: Boolean!
   due: String
-  assigned_at: String
+  assignedAt: String
   group: String
   type: String
   priority: String
@@ -34,7 +34,7 @@ type Subtask {
   content: String
   done: Boolean!
   due: String
-  assigned_at: String
+  assignedAt: String
   priority: String
   archived: Boolean!
 }
@@ -86,5 +86,5 @@ type Mutation {
   updateTaskIsDone(id: String!, isDone: Boolean!): Task!
   deleteTask(id: String!): Task
   updateTaskContent(id: String!, content: String!): Task!
-  updateTaskAssignedAt(id: String!, assigned_at: String!): Task!
+  updateTaskAssignedAt(id: String!, assignedAt: String!): Task!
 }
