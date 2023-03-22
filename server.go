@@ -23,7 +23,7 @@ func loadEnv() {
 }
 
 func main() {
-	loadEnv()
+	// loadEnv()
 	db, err := db.ConnectDB()
 	if err != nil {
 		log.Fatal(err.Error())

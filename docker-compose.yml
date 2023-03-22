@@ -1,0 +1,45 @@
+version: '3'
+services:
+  db:
+    container_name: tas9-db
+    restart: always
+    image: mysql:8.0
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_USER: localuser
+      MYSQL_PASSWORD: localpass
+      MYSQL_DATABASE: localdb
+    volumes:
+      - ./persistence/init:/docker-entrypoint-initdb.d
+    networks:
+      - tas9-network
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      DB_USERNAME: localuser
+      DB_PASSWORD: localpass
+      DB_HOST: tas9-db
+      DB_PORT: 3306
+      DATABASE: localdb
+    tty: true
+    depends_on:
+      - db
+    networks:
+      - tas9-network
+
+networks:
+  tas9-network:
+    driver: bridge
+
+
+
+
+  
