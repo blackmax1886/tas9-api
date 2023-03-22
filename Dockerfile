@@ -9,11 +9,14 @@ RUN go build -o main
 
 FROM alpine:latest
 
+RUN apk update
+RUN apk add --no-cache curl mariadb-client
+
 WORKDIR /app
 
 COPY --from=builder /app/main .
+COPY init.sh .
 
 EXPOSE 8080
 
-# Run the main binary when the container starts
-CMD [ "./main" ]
+CMD ["sh", "./init.sh"]
