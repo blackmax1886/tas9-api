@@ -1,4 +1,5 @@
 # !/bin/bash
+# sh line endings should be LF
 
 # wait for Mysql server starting
 until mysqladmin ping -h tas9-db -P 3306 --silent; do
