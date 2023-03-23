@@ -34,9 +34,14 @@ func main() {
 		port = defaultPort
 	}
 
+	allowedOrigin := os.Getenv("ALLOWED_ORIGIN")
+	// if allowedOrigin == "" {
+	// 	allowedOrigin = "http://localhost:3000"
+	// }
+
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{DB: db}}))
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000"},
+		AllowedOrigins:   []string{allowedOrigin},
 		AllowCredentials: true,
 	})
 

@@ -29,6 +29,7 @@ services:
       DB_HOST: tas9-db
       DB_PORT: 3306
       DATABASE: localdb
+      ALLOWED_ORIGIN: https://tas9.vercel.app/
     tty: true
     depends_on:
       - db
